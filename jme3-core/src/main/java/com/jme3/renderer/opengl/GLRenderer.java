@@ -179,7 +179,7 @@ public final class GLRenderer implements Renderer {
     private boolean hasExtension(String extensionName) {
         return extensions.contains(extensionName);
     }
-
+    //write short units of code
     private void loadCapabilitiesES() {
         caps.add(Caps.GLSL100);
         caps.add(Caps.OpenGLES20);
@@ -258,17 +258,13 @@ public final class GLRenderer implements Renderer {
 //        initialDrawBuf = GL.GL_BACK;
 //        initialReadBuf = GL.GL_BACK;
     }
-
-    private void loadCapabilitiesCommon() {
-        extensions = loadExtensions();
-
-        limits.put(Limits.VertexTextureUnits, getInteger(GL.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS));
-        if (limits.get(Limits.VertexTextureUnits) > 0) {
-            caps.add(Caps.VertexTextureFetch);
-        }
-
-        limits.put(Limits.FragmentTextureUnits, getInteger(GL.GL_MAX_TEXTURE_IMAGE_UNITS));
-
+    //extract methods 
+    public static void addCaps() {
+    	if (limits.get(Limits.VertexTextureUnits) > 0) {
+    		caps.add(Caps.VertexTextureFetch);
+    	}
+    }
+    private static void putLimits() {
         if (caps.contains(Caps.OpenGLES20)) {
             limits.put(Limits.FragmentUniformVectors, getInteger(GL.GL_MAX_FRAGMENT_UNIFORM_VECTORS));
             limits.put(Limits.VertexUniformVectors, getInteger(GL.GL_MAX_VERTEX_UNIFORM_VECTORS));
@@ -276,15 +272,30 @@ public final class GLRenderer implements Renderer {
             limits.put(Limits.FragmentUniformVectors, getInteger(GL.GL_MAX_FRAGMENT_UNIFORM_COMPONENTS) / 4);
             limits.put(Limits.VertexUniformVectors, getInteger(GL.GL_MAX_VERTEX_UNIFORM_COMPONENTS) / 4);
         }
-
-        limits.put(Limits.VertexAttributes, getInteger(GL.GL_MAX_VERTEX_ATTRIBS));
-        limits.put(Limits.TextureSize, getInteger(GL.GL_MAX_TEXTURE_SIZE));
-        limits.put(Limits.CubemapSize, getInteger(GL.GL_MAX_CUBE_MAP_TEXTURE_SIZE));
-
+    }
+    private static void addCapsExtension() {
         if (hasExtension("GL_ARB_draw_instanced") &&
                 hasExtension("GL_ARB_instanced_arrays")) {
             caps.add(Caps.MeshInstancing);
         }
+    }
+
+    //write simple units of code, Method to shorten
+    private void loadCapabilitiesCommon() {
+        extensions = loadExtensions();
+        limits.put(Limits.VertexTextureUnits, getInteger(GL.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS));
+        
+        addCaps();
+       
+        limits.put(Limits.FragmentTextureUnits, getInteger(GL.GL_MAX_TEXTURE_IMAGE_UNITS));
+        
+        putLimits();
+
+        limits.put(Limits.VertexAttributes, getInteger(GL.GL_MAX_VERTEX_ATTRIBS));
+        limits.put(Limits.TextureSize, getInteger(GL.GL_MAX_TEXTURE_SIZE));
+        limits.put(Limits.CubemapSize, getInteger(GL.GL_MAX_CUBE_MAP_TEXTURE_SIZE));
+        
+        addCapsExtension();
 
         if (hasExtension("GL_OES_element_index_uint") || gl2 != null) {
             caps.add(Caps.IntegerIndexBuffer);
